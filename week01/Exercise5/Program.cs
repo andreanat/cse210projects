@@ -28,7 +28,7 @@ class Program
     {
         Console.Write("Please enter your favorite number: ");
         int n;
-        while (!int.TryParse(Console.ReadLine(), out int n))
+        while (!int.TryParse(Console.ReadLine(), out n))
         {
             Console.Write("Please enter a valid whole number: ");
         }
