@@ -6,8 +6,8 @@ class Program
     {
         Journal journal = new Journal();
         PromptGenerator promptGen = new PromptGenerator();
-        bool running = true;
 
+        bool running = true;
         while (running)
         {
             Console.WriteLine();
@@ -16,24 +16,15 @@ class Program
             Console.WriteLine("2. Display all entries");
             Console.WriteLine("3. Save to file");
             Console.WriteLine("4. Load from file");
-            Console.WriteLine("5. Quit");
-            Console.Write("Select an option: ");
+            Console.WriteLine("5. Search entries (extra)");
+            Console.WriteLine("6. Quit");
+            Console.Write("Select an option (1-6): ");
             string choice = Console.ReadLine();
 
             switch (choice)
             {
                 case "1":
-                    string prompt = promptGen.GetRandomPrompt();
-                    Console.WriteLine($"\nPrompt: {prompt}");
-                    Console.Write("Your response: ");
-                    string response = Console.ReadLine();
-
-                    Entry e = new Entry();
-                    e._date = DateTime.Now.ToShortDateString();
-                    e._promptText = prompt;
-                    e._entryText = response;
-
-                    journal.AddEntry(e);
+                    WriteEntry(journal, promptGen);
                     break;
 
                 case "2":
@@ -41,18 +32,32 @@ class Program
                     break;
 
                 case "3":
-                    Console.Write("Enter filename to save: ");
-                    journal.SaveToFile(Console.ReadLine());
-                    Console.WriteLine("Journal saved.");
+                    Console.Write("Enter filename to save (e.g., journal.json): ");
+                    string saveName = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(saveName))
+                    {
+                        journal.SaveToFile(saveName);
+                        Console.WriteLine("Journal saved.");
+                    }
                     break;
 
                 case "4":
-                    Console.Write("Enter filename to load: ");
-                    journal.LoadFromFile(Console.ReadLine());
-                    Console.WriteLine("Journal loaded.");
+                    Console.Write("Enter filename to load (e.g., journal.json): ");
+                    string loadName = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(loadName))
+                    {
+                        journal.LoadFromFile(loadName);
+                        Console.WriteLine("Journal loaded.");
+                    }
                     break;
 
                 case "5":
+                    Console.Write("Search term: ");
+                    string term = Console.ReadLine();
+                    journal.Search(term);
+                    break;
+
+                case "6":
                     running = false;
                     break;
 
@@ -61,5 +66,23 @@ class Program
                     break;
             }
         }
+    }
+
+    static void WriteEntry(Journal journal, PromptGenerator promptGen)
+    {
+        string prompt = promptGen.GetRandomPrompt();
+        Console.WriteLine($"\nPrompt: {prompt}");
+        Console.Write("Your response: ");
+        string response = Console.ReadLine();
+
+        Entry e = new Entry
+        {
+            _date = DateTime.Now.ToString("yyyy-MM-dd"),
+            _promptText = prompt,
+            _entryText = response ?? ""
+        };
+
+        journal.AddEntry(e);
+        Console.WriteLine("Entry added.");
     }
 }
